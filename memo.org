@@ -1,0 +1,25 @@
+#+TITLE: setuptoolsの最近
+#+AUTHOR: Atsushi Odagiri
+#+OPTIONS: ^:{}
+
+* setuptoolsとは？
+
+  - distutilsを拡張するもの
+  - 所謂 ~setup.py~ を作成するために使う
+
+* distutilsの行く末
+* インストーラーはeasy_installからpipへ
+  * easy_installの弱点
+* eggディレクトリでmulti versioningしてたのに！
+* バイナリディストリビューションはeggからwheelへ
+  * eggの弱点
+* entrypointは!?
+* pkg_resourcesとその後継
+  * distlib
+  * packaging
+  * pkg_resourcesの機能が標準ライブラリへ
+    * importlib.metadata
+    * importlib.resource
+* setup.cfgでできること
+  * pyproject.toml
+  * distutils.commandどうするの？
