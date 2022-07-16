@@ -4,16 +4,29 @@
 
 * setuptoolsとは？
 
-  - distutilsを拡張するもの
+  - ~distutils~ を拡張するもの
   - 所謂 ~setup.py~ を作成するために使う
 
 * distutilsの行く末
+  - PEP 632 – Deprecate distutils module
+  - Good bye ~setup.py~ !
+* distutils.commandどうするの？
+  - ~distutils-precedence.pth~
+  - ~SETUPTOOLS_USE_DISTUTILS=local~
 * インストーラーはeasy_installからpipへ
-  * easy_installの弱点
+  - ~easy_install~ の弱点
+  - pythonバージョンの指定が厳しすぎる
+  - PEP 453 – Explicit bootstrapping of pip in Python installations
+
 * eggディレクトリでmulti versioningしてたのに！
+ * ~egg~ ディレクトリ
+ * ~easy_install -m~ でmulti versioning対象に
+ * ~setuptools.Require~ で特定バージョンを有効化
+ * ~venv~ で分離すればいいよね
+ * PEP 405 – Python Virtual Environments
 * バイナリディストリビューションはeggからwheelへ
-  * eggの弱点
-* entrypointは!?
+  - eggの弱点
+  - PEP 491 – The Wheel Binary Package Format 1.9
 * pkg_resourcesとその後継
   * distlib
   * packaging
@@ -21,5 +34,6 @@
     * importlib.metadata
     * importlib.resource
 * setup.cfgでできること
-  * pyproject.toml
-  * distutils.commandどうするの？
+ - pyproject.toml
+ - PEP 517 – A build-system independent format for source trees
+* entrypointは!?
