@@ -31,57 +31,119 @@
 - setuptoolsの最近 2022 65.3.0
 
 * setuptoolsとは？
-
+** setuptoolsとは？
   - ~distutils~ を拡張するもの
   - 所謂 ~setup.py~ を作成するために使う
 
+** setuptoolsの最近
+  - いろいろ剥ぎ取られてきた
+  - 純粋にパッケージ作成するツール
 * distutilsの行く末
+** distutilsの行く末
   - PEP 632 – Deprecate distutils module
   - Good bye ~setup.py~ !
-* distutils.commandどうするの？
-  - ~distutils-precedence.pth~
-  - ~SETUPTOOLS_USE_DISTUTILS=local~
-* インストーラーはeasy_installからpipへ
+  - 3.12で削除(多分)
+    - https://github.com/python/cpython/tree/main/Lib/distutils
+    - まだある...
+** distutilsはどこにある？
+  - 標準ライブラリ
+  - setuptoolsの中
+  - ~SETUPTOOLS_USE_DISTUTILS~
+    - ~distutils-precedence.pth~
+    - "local" setuptools内部で持っているdistutilsを使う
+    - "stdlib" 標準ライブラリにあるdistutilsを使う
+** pthファイル
+ - ~site-packages~ に置いてある ~*.pth~
+ - ~./~ などで始まる行は ~sys.path~ に追加
+ - それ以外の行はpythonコードとして *実行される*
+   - *回避不能*
+   - python2のころは ~-S~ オプションで回避できてたかも
+* setuptoolsが失ったもの
+** インストーラーはeasy_installからpipへ
   - ~easy_install~ の弱点
     - ~egg~ ディレクトリへのインストール
     - ~egg~ zip safe
   - PEP 453 – Explicit bootstrapping of pip in Python installations
-
-* eggディレクトリでmulti versioningしてたのに！
+** eggディレクトリ
+  - ~site-packages~ 以下にディストリビューションごとのディレクトリ( = eggディレクトリ)を作成してその下に展開
+  - pthファイルを使って ~sys.path~ に追加
+** eggディレクトリでmulti versioningしてたのに！
  * ~egg~ ディレクトリ
  * ~easy_install -m~ でmulti versioning対象に
  * ~setuptools.Require~ で特定バージョンを有効化
  * ~venv~ で分離すればいいよね
  * PEP 405 – Python Virtual Environments
-* バイナリディストリビューションはeggからwheelへ
+** バイナリディストリビューションはeggからwheelへ
   - eggの弱点
   - pythonバージョンの指定が厳しすぎる
   - PEP 491 – The Wheel Binary Package Format 1.9
-* 名前空間パッケージ
+  - PEP 425 – Compatibility Tags for Built Distributions
+  - PEP 513 – A Platform Tag for Portable Linux Built Distributions
+  - PEP 571 – The manylinux2010 Platform Tag
+  - PEP 599 – The manylinux2014 Platform Tag
+  - PEP 600 – Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
+  - egg2wheel
+** egg_infoからdist_infoに！
+  - PEP 241 – Metadata for Python Software Packages
+  - PEP 314 – Metadata for Python Software Packages v1.1
+  - PEP 345 – Metadata for Python Software Packages 1.2
+  - PEP 566 – Metadata for Python Software Packages 2.1
+    - description-content-type
+  - PEP 643 – Metadata for Package Source Distributions
+  - 2.3
+  - PEP 685 – Comparison of extra names for optional distribution dependencies
+  - PEP 508 – Dependency specification for Python Software Packages
+  - PEP 386 – Changing the version comparison module in Distutils
+  - PEP 376 – Database of Installed Python Distributions
+** 名前空間パッケージはただのディレクトリへ
   - pkg_resources
   - pkgutil
   - PEP 420 – Implicit Namespace Packages
-* pkg_resourcesとその後継
+** 名前空間パッケージが必要だったころ
+  - eggディレクトリ
+  - 同じ名前のパッケージが複数のディレクトリに存在
+** pkg_resourcesとその後継
   * distlib
   * packaging
   * pkg_resourcesの機能が標準ライブラリへ
     * importlib.metadata
     * importlib.resource
-* setup.cfgでできること
+* setup.pyやsetup.cfgも役割を終えていく
+** setup.cfgでできること
  - pyproject.toml
  - PEP 517 – A build-system independent format for source trees
-* entrypointは!?
-* develop!
-- ~setup.py develop~
-- ~pip install -e .~
-- PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
+** メタデータを書く場所
+- setup.py
+- setup.cfg
+- pyproject.toml
+  - PEP 621 – Storing project metadata in pyproject.toml
+** entrypointは!?
+- PEP 621でメタデータ上の定義は存在する
+  - 使い方についてはPEPなし
+- metadata
+  - project.entry-points
+- poetry
+  - tool.poetry.plugins
+- flit
+  - tool.flit..entry-points
+** develop!editable!
+  - ~setup.py develop~
+  - ~pip install -e .~
+  - PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
 * 参考
 - PEPs
   - PEP 405 – Python Virtual Environments
   - PEP 420 – Implicit Namespace Packages
-  - PEP 453 – Explicit bootstrapping of pip in Python installations    
+  - PEP 425 – Compatibility Tags for Built Distributions
+  - PEP 440 – Version Identification and Dependency Specification
+  - PEP 453 – Explicit bootstrapping of pip in Python installations
   - PEP 491 – The Wheel Binary Package Format 1.9
+  - PEP 513 – A Platform Tag for Portable Linux Built Distributions
   - PEP 517 – A build-system independent format for source trees
+  - PEP 571 – The manylinux2010 Platform Tag
+  - PEP 599 – The manylinux2014 Platform Tag
+  - PEP 600 – Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
+  - PEP 621 – Storing project metadata in pyproject.toml
   - PEP 632 – Deprecate distutils module
   - PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
 - [[https://setuptools.pypa.io/en/latest/][setuptools documentation]]
