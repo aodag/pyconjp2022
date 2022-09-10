@@ -1,6 +1,12 @@
 #+TITLE: setuptoolsの最近
 #+AUTHOR: Atsushi Odagiri
+#+BEAMER_THEME: PaloAlto
+#+BEAMER_COLOR_THEME: beetle
+#+OPTIONS: H:2 toc:t num:t
 #+OPTIONS: ^:{}
+#+LaTeX_CLASS: beamer
+#+LaTeX_HEADER: \usepackage{luatexja}
+
 
 * setuptoolsとは？
 
