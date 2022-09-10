@@ -7,6 +7,28 @@
 #+LaTeX_CLASS: beamer
 #+LaTeX_HEADER: \usepackage{luatexja}
 
+* はじめに
+
+** お前誰よ
+   - Atsushi Odagiri
+   - Open Collector
+   - Python
+
+** 今日のお話
+   - setuptools!
+
+* 今日のsetuptools
+** 歴史
+- パッケージングの今と未来 2013 1.1.5
+- パッケージングの今 2014 6.0
+- Packaging最前線 2015 18.3
+- パッケージングを支える技術 2016 27.3.0
+- Pythonとパッケージングと私 2017 36.4.0
+- あなたとPython 今すぐパッケージング 2018 40.2.0
+- 今日のsetuptools 2019 LT 41.2.0
+- パッケージングの呼び声 2021 charity talk 53.0.0
+** 今日のsetuptools
+- setuptoolsの最近 2022 65.3.0
 
 * setuptoolsとは？
 
@@ -21,7 +43,8 @@
   - ~SETUPTOOLS_USE_DISTUTILS=local~
 * インストーラーはeasy_installからpipへ
   - ~easy_install~ の弱点
-  - pythonバージョンの指定が厳しすぎる
+    - ~egg~ ディレクトリへのインストール
+    - ~egg~ zip safe
   - PEP 453 – Explicit bootstrapping of pip in Python installations
 
 * eggディレクトリでmulti versioningしてたのに！
@@ -32,7 +55,12 @@
  * PEP 405 – Python Virtual Environments
 * バイナリディストリビューションはeggからwheelへ
   - eggの弱点
+  - pythonバージョンの指定が厳しすぎる
   - PEP 491 – The Wheel Binary Package Format 1.9
+* 名前空間パッケージ
+  - pkg_resources
+  - pkgutil
+  - PEP 420 – Implicit Namespace Packages
 * pkg_resourcesとその後継
   * distlib
   * packaging
@@ -43,3 +71,18 @@
  - pyproject.toml
  - PEP 517 – A build-system independent format for source trees
 * entrypointは!?
+* develop!
+- ~setup.py develop~
+- ~pip install -e .~
+- PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
+* 参考
+- PEPs
+  - PEP 405 – Python Virtual Environments
+  - PEP 420 – Implicit Namespace Packages
+  - PEP 453 – Explicit bootstrapping of pip in Python installations    
+  - PEP 491 – The Wheel Binary Package Format 1.9
+  - PEP 517 – A build-system independent format for source trees
+  - PEP 632 – Deprecate distutils module
+  - PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
+- [[https://setuptools.pypa.io/en/latest/][setuptools documentation]]
+- [[https://packaging.python.org/en/latest/][Python Packaging User Guide]]
