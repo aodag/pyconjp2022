@@ -19,16 +19,26 @@
 
 * 今日のsetuptools
 ** 歴史
-- パッケージングの今と未来 2013 1.1.5
-- パッケージングの今 2014 6.0
-- Packaging最前線 2015 18.3
-- パッケージングを支える技術 2016 27.3.0
-- Pythonとパッケージングと私 2017 36.4.0
-- あなたとPython 今すぐパッケージング 2018 40.2.0
-- 今日のsetuptools 2019 LT 41.2.0
-- パッケージングの呼び声 2021 charity talk 53.0.0
+- 2013 1.1.5
+  - パッケージングの今と未来
+- 2014 6.0
+  - パッケージングの今 2014 6.0
+- 2015 18.3
+  - Packaging最前線
+- 2016 27.3.0
+  - パッケージングを支える技術
+- 2017 36.4.0
+  - Pythonとパッケージングと私
+- 2018 40.2.0
+  - あなたとPython 今すぐパッケージング
+- 2019 41.2.0
+  - LT 今日のsetuptools
+- 2021 53.0.0
+  - charity talk パッケージングの呼び声
+
 ** 今日のsetuptools
-- setuptoolsの最近 2022 65.3.0
+- 2022 65.3.0
+  - setuptoolsの最近
 
 * setuptoolsとは？
 ** setuptoolsとは？
@@ -37,8 +47,10 @@
 
 ** setuptoolsの最近
   - いろいろ剥ぎ取られてきた
-  - 純粋にパッケージ作成するツール
-* distutilsの行く末
+  - 純粋にパッケージ作成するツールとして続投？
+  - パッケージング関連PEPへの追従
+
+* Good-bye distutils!
 ** distutilsの行く末
   - PEP 632 – Deprecate distutils module
   - Good bye ~setup.py~ !
@@ -47,42 +59,59 @@
     - まだある...
 ** distutilsはどこにある？
   - 標準ライブラリ
-  - setuptoolsの中
+  - setuptoolsの中 (~setuptools/_distutils~)
   - ~SETUPTOOLS_USE_DISTUTILS~
-    - ~distutils-precedence.pth~
-    - "local" setuptools内部で持っているdistutilsを使う
-    - "stdlib" 標準ライブラリにあるdistutilsを使う
+    - ~"stdlib"~ 標準ライブラリにあるdistutilsを使う
+    - ~"local"~ setuptools内部で持っているdistutilsを使う
+  - ~distutils-precedence.pth~ の中で切り替え
+
 ** pthファイル
  - ~site-packages~ に置いてある ~*.pth~
  - ~./~ などで始まる行は ~sys.path~ に追加
  - それ以外の行はpythonコードとして *実行される*
    - *回避不能*
    - python2のころは ~-S~ オプションで回避できてたかも
+
+#+begin_example
+-S
+Disable the import of the module site and the site-dependent manipulations of sys.path that it entails.
+#+end_example
+
 * setuptoolsが失ったもの
 ** インストーラーはeasy_installからpipへ
-  - ~easy_install~ の弱点
-    - ~egg~ ディレクトリへのインストール
-    - ~egg~ zip safe
   - PEP 453 – Explicit bootstrapping of pip in Python installations
-** eggディレクトリ
+    - pythonインストールと同時にpipもインストールされるようになった
+  - easy_installとpip
+    - PyPIからダウンロードしてインストール
+    - 対象ライブラリが依存するライブラリもインストールする
+  - ~easy_install~ の弱点
+    - atomic性の欠如
+      - 複数パッケージインストール中にエラーが発生すると中途半端な状態に
+  - ~egg~ ディレクトリへのインストール
+** インストール先はeggディレクトリからvenvへ
+  - PEP 405 – Python Virtual Environments
   - ~site-packages~ 以下にディストリビューションごとのディレクトリ( = eggディレクトリ)を作成してその下に展開
+    - 例えば ~site-packages/pyramid-1.4-egg/pyramid/~
   - pthファイルを使って ~sys.path~ に追加
+  - ~egg~ zip safe
+    - eggディレクトリと同じ構造でzip化した状態
+    - zip_safe=True ならeggファイルのままsite-packagesにコピー
 ** eggディレクトリでmulti versioningしてたのに！
- * ~egg~ ディレクトリ
- * ~easy_install -m~ でmulti versioning対象に
- * ~setuptools.Require~ で特定バージョンを有効化
- * ~venv~ で分離すればいいよね
- * PEP 405 – Python Virtual Environments
+ - ~easy_install -m~ でmulti versioning対象に
+   - pthファイルから対象のeggディレクトリを削除
+   - このままではsys.pathに追加されなくなる
+ - ~setuptools.Require~ で特定バージョンを有効化
+ - ~venv~ で分離すればいいよね
 ** バイナリディストリビューションはeggからwheelへ
-  - eggの弱点
-  - pythonバージョンの指定が厳しすぎる
   - PEP 491 – The Wheel Binary Package Format 1.9
   - PEP 425 – Compatibility Tags for Built Distributions
   - PEP 513 – A Platform Tag for Portable Linux Built Distributions
   - PEP 571 – The manylinux2010 Platform Tag
   - PEP 599 – The manylinux2014 Platform Tag
   - PEP 600 – Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
-  - egg2wheel
+  - wheel/egg2wheel
+  - eggの弱点
+    - pythonバージョンの指定が厳しすぎる
 ** egg_infoからdist_infoに！
   - PEP 241 – Metadata for Python Software Packages
   - PEP 314 – Metadata for Python Software Packages v1.1
@@ -96,9 +125,15 @@
   - PEP 386 – Changing the version comparison module in Distutils
   - PEP 376 – Database of Installed Python Distributions
 ** 名前空間パッケージはただのディレクトリへ
+  - PEP 420 – Implicit Namespace Packages
   - pkg_resources
   - pkgutil
-  - PEP 420 – Implicit Namespace Packages
+#+begin_src python
+  try:
+      __import__('pkg_resources').declare_namespace(__name__)
+  except ImportError:
+      __path__ = __import__('pkgutil').extend_path(__path__, __name__)
+#+end_src
 ** 名前空間パッケージが必要だったころ
   - eggディレクトリ
   - 同じ名前のパッケージが複数のディレクトリに存在
