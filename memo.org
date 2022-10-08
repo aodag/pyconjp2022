@@ -50,6 +50,88 @@
   - 純粋にパッケージ作成するツールとして続投？
   - パッケージング関連PEPへの追従
 
+* setuptoolsの近代化
+  - PEP 517
+    - ~setup.py~ が不要に！(でもeditableするときは必要)
+  - PEP 621
+    - ~setup.cfg~ が不要に！(でもeditableするときは必要)
+  - PEP 660
+    - ~pyproject.toml~ だけでeditable可能に！
+
+** setup.py の役割
+- パッケージメタデータを書く
+- パッケージングする
+** setup.pyにメタデータを書く
+#+begin_src python
+  setup(
+      name="very-useful-tool",
+      version="0.1",
+      author="Atsushi Odagiri",
+      ...
+      install_requires=[
+          "pyramid",
+      ],
+      tests_require=[
+          "pytest",
+      ],
+      ...
+  )
+#+end_src
+** setup.pyでパッケージングする
+#+begin_example
+$ python setup.py sdist bdist_wheel
+$ python setup.py upload
+#+end_example
+** setup.cfgにメタデータを書く
+- ~setup~ 関数の引数として書いていたが ~setup.cfg~ にも書ける
+- ~setup.py~ の中身は引数なしの ~setup()~ だけに
+** PEP517
+- sdistからwheelを作る方法の定義
+- パッケージングツールはwheel作成のAPIを提供する
+- パッケージング設定は ~pyproject.toml~ に書く
+  - 設定ファイル増えたよ！？
+
+#+begin_src toml
+  [build-system]
+  requires = ["setuptools"]
+  build-backend = "setuptools.build_meta"
+#+end_src
+
+** ツールの分離
+- wheel作成は ~build~ を使う
+- PyPIへのアップロードは ~twine~ を使う
+- ~setup.py~ いらなくない？
+  
+#+begin_example
+$ python -m build .
+$ python -m twine upload dist/*.whl
+#+end_example
+** PEP621
+- ~pyproject.toml~ にメタデータを書くためのスキーマ定義
+#+begin_src toml
+[metadata]
+name = meowpkg
+version = 0.0.1
+description = a package that meows
+
+[options]
+packages = find:
+#+end_src
+** setup.pyは不要になるか
+- PEP 517 対応
+  - ~setup.py~ なしでもパッケージング作業は可能
+- PEP 621 対応
+  - メタデータの記述が ~setup.cfg~ から ~pyproject.toml~ に移動
+- editableインストールするときはまだ必要
+
+
+** パッケージメタデータ（オールドスタイル）
+
+** パッケージメタデータ（セミオールドスタイル）
+
+** パッケージメタデータ（PEP621）
+
+
 * Good-bye distutils!
 ** distutilsの行く末
   - PEP 632 – Deprecate distutils module
@@ -143,29 +225,8 @@ Disable the import of the module site and the site-dependent manipulations of sy
   * pkg_resourcesの機能が標準ライブラリへ
     * importlib.metadata
     * importlib.resource
-* setup.pyやsetup.cfgも役割を終えていく
-** setup.cfgでできること
- - pyproject.toml
- - PEP 517 – A build-system independent format for source trees
-** メタデータを書く場所
-- setup.py
-- setup.cfg
-- pyproject.toml
-  - PEP 621 – Storing project metadata in pyproject.toml
-** entrypointは!?
-- PEP 621でメタデータ上の定義は存在する
-  - 使い方についてはPEPなし
-- metadata
-  - project.entry-points
-- poetry
-  - tool.poetry.plugins
-- flit
-  - tool.flit..entry-points
-** develop!editable!
-  - ~setup.py develop~
-  - ~pip install -e .~
-  - PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
-* まとめ
+* おわり
+** まとめ
 - setuptoolsの近代化
   - PEP 517
     - ~setup.py~ が不要に！(でもeditableするときは必要)
@@ -179,7 +240,7 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - インストーラー
   - egg
   - pkg_resources
-* 参考
+** 参考
 - PEPs
   - PEP 405 – Python Virtual Environments
   - PEP 420 – Implicit Namespace Packages
