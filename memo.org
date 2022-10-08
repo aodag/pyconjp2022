@@ -165,6 +165,20 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - ~setup.py develop~
   - ~pip install -e .~
   - PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
+* まとめ
+- setuptoolsの近代化
+  - PEP 517
+    - ~setup.py~ が不要に！(でもeditableするときは必要)
+  - PEP 621
+    - ~setup.cfg~ が不要に！(でもeditableするときは必要)
+  - PEP 660
+    - ~pyproject.toml~ だけでeditable可能に！
+- distutilsが標準ライブラリから消えるのでsetuptoolsに同梱
+  - ハックがひどい
+- setuptoolsが失ってきたもの
+  - インストーラー
+  - egg
+  - pkg_resources
 * 参考
 - PEPs
   - PEP 405 – Python Virtual Environments
