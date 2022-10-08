@@ -1,24 +1,42 @@
 #+TITLE: setuptoolsの最近
+#+SUBTITLE: PyCon JP 2022
 #+AUTHOR: Atsushi Odagiri
-#+BEAMER_THEME: PaloAlto
+#+BEAMER_THEME: Madrid
 #+BEAMER_COLOR_THEME: beetle
 #+OPTIONS: H:2 toc:t num:t
 #+OPTIONS: ^:{}
 #+LaTeX_CLASS: beamer
 #+LaTeX_HEADER: \usepackage{luatexja}
+#+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col)
 
 * はじめに
 
 ** お前誰よ
+***  
+:PROPERTIES:
+:BEAEMER_COL: 0.48
+:BEAMER_ENV: block
+:END:
    - Atsushi Odagiri
    - Open Collector
-   - Python
+   - Pythonは1.5くらいのころから
 
-** 今日のお話
-   - setuptools!
+*** 
+:PROPERTIES:
+:BEAEMER_COL: 0.48
+:BEAMER_ENV: block
+:END:
+
+#+ATTR_LATEX: :width 2cm
+[[./r-penta512.png]]
+
+#+ATTR_LATEX: :width 2cm
+[[./oc-logo.png]]
+#+ATTR_LATEX: :width 2cm
+[[./logo-w.png]]
 
 * 今日のsetuptools
-** 歴史
+** setuptoolsと私
 - 2013 1.1.5
   - パッケージングの今と未来
 - 2014 6.0
@@ -37,20 +55,21 @@
   - charity talk パッケージングの呼び声
 
 ** 今日のsetuptools
-- 2022 65.3.0
-  - setuptoolsの最近
+- 2022 65.4.1
+  - *NEW!* setuptoolsの最近
 
 * setuptoolsとは？
 ** setuptoolsとは？
   - ~distutils~ を拡張するもの
-  - 所謂 ~setup.py~ を作成するために使う
+  - 所謂 ~setup.py~ を作成するために使う(使われた)
 
 ** setuptoolsの最近
-  - いろいろ剥ぎ取られてきた
-  - 純粋にパッケージ作成するツールとして続投？
-  - パッケージング関連PEPへの追従
+  - 近代化：パッケージング関連PEPへの追従
+  - distutilsが標準ライブラリから消える予定
+  - いろいろ剥ぎ取られて純粋なパッケージ作成ツールになってきている
 
 * setuptoolsの近代化
+** PEPへの追従
   - PEP 517
     - ~setup.py~ が不要に！(でもeditableするときは必要)
   - PEP 621
@@ -93,15 +112,9 @@ $ python -m twine upload dist/*.whl
 #+end_example
 ** PEP621
 - ~pyproject.toml~ にメタデータを書くためのスキーマ定義
-#+begin_src toml
-[metadata]
-name = meowpkg
-version = 0.0.1
-description = a package that meows
+- v61.0.0 (24 Mar 2022) で導入
 
-[options]
-packages = find:
-#+end_src
+  
 ** パッケージメタデータ（オールドスタイル）
 - ~setup.py~
 #+begin_src python
@@ -154,9 +167,9 @@ packages = find:
   - ~setup.py~ なしでもパッケージング作業は可能
 - PEP 621 対応
   - メタデータの記述が ~setup.cfg~ から ~pyproject.toml~ に移動
-- editableインストールするときはまだ必要
+  - editableインストールするときはまだ必要
   - 空の ~setup.cfg~ を作るはめに...
-  - PEP 660 でeditableインストールのためのAPIが提案された
+- PEP 660 でeditableインストールのためのAPIが提案された
   - poetryやflitは対応済
   - setuptoolsは作業中
 
@@ -274,7 +287,7 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - pkg_resources
   - などなど
 ** 参考(1)
-- PEPs
+- PEPs https://peps.python.org/topic/packaging/
   - PEP 405 – Python Virtual Environments
   - PEP 420 – Implicit Namespace Packages
   - PEP 425 – Compatibility Tags for Built Distributions
