@@ -61,22 +61,7 @@
 ** setup.py の役割
 - パッケージメタデータを書く
 - パッケージングする
-** setup.pyにメタデータを書く
-#+begin_src python
-  setup(
-      name="very-useful-tool",
-      version="0.1",
-      author="Atsushi Odagiri",
-      ...
-      install_requires=[
-          "pyramid",
-      ],
-      tests_require=[
-          "pytest",
-      ],
-      ...
-  )
-#+end_src
+
 ** setup.pyでパッケージングする
 #+begin_example
 $ python setup.py sdist bdist_wheel
@@ -117,20 +102,63 @@ description = a package that meows
 [options]
 packages = find:
 #+end_src
+** パッケージメタデータ（オールドスタイル）
+- ~setup.py~
+#+begin_src python
+  setup(
+      name="very-useful-tool",
+      version="0.1",
+      author="Atsushi Odagiri",
+      ...
+      install_requires=[
+          "pyramid",
+      ],
+      tests_require=[
+          "pytest",
+      ],
+      ...
+  )
+#+end_src
+** パッケージメタデータ（セミオールドスタイル）
+- ~setup.cfg~
+#+begin_src conf
+  [metadata]
+  name = very-useful-tool
+  version = 0.1
+  author Atsushi Odagiri
+  ...
+
+  [options]
+  install_requires =
+    pyramid
+  tests_require =
+    pytest
+#+end_src
+** パッケージメタデータ（PEP621）
+- ~pyproject.toml~
+#+begin_src toml
+  [project]
+  name="very-useful-tool"
+  version="0.1"
+  author="Atsushi Odagiri"
+  dependencies =
+    ["pyramid"]
+
+  [project.optional-dependencies]
+  tests = ["pytest"]
+
+
+#+end_src
 ** setup.pyは不要になるか
 - PEP 517 対応
   - ~setup.py~ なしでもパッケージング作業は可能
 - PEP 621 対応
   - メタデータの記述が ~setup.cfg~ から ~pyproject.toml~ に移動
 - editableインストールするときはまだ必要
-
-
-** パッケージメタデータ（オールドスタイル）
-
-** パッケージメタデータ（セミオールドスタイル）
-
-** パッケージメタデータ（PEP621）
-
+  - 空の ~setup.cfg~ を作るはめに...
+  - PEP 660 でeditableインストールのためのAPIが提案された
+  - poetryやflitは対応済
+  - setuptoolsは作業中
 
 * Good-bye distutils!
 ** distutilsの行く末
@@ -192,8 +220,6 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - PEP 599 – The manylinux2014 Platform Tag
   - PEP 600 – Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
   - wheel/egg2wheel
-  - eggの弱点
-    - pythonバージョンの指定が厳しすぎる
 ** egg_infoからdist_infoに！
   - PEP 241 – Metadata for Python Software Packages
   - PEP 314 – Metadata for Python Software Packages v1.1
@@ -240,6 +266,7 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - インストーラー
   - egg
   - pkg_resources
+  - などなど
 ** 参考
 - PEPs
   - PEP 405 – Python Virtual Environments
