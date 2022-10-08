@@ -232,25 +232,31 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - PEP 508 – Dependency specification for Python Software Packages
   - PEP 386 – Changing the version comparison module in Distutils
   - PEP 376 – Database of Installed Python Distributions
-** 名前空間パッケージはただのディレクトリへ
-  - PEP 420 – Implicit Namespace Packages
-  - pkg_resources
-  - pkgutil
-#+begin_src python
-  try:
-      __import__('pkg_resources').declare_namespace(__name__)
-  except ImportError:
-      __path__ = __import__('pkgutil').extend_path(__path__, __name__)
-#+end_src
-** 名前空間パッケージが必要だったころ
-  - eggディレクトリ
-  - 同じ名前のパッケージが複数のディレクトリに存在
 ** pkg_resourcesとその後継
   * distlib
   * packaging
   * pkg_resourcesの機能が標準ライブラリへ
     * importlib.metadata
     * importlib.resource
+** インストールされているパッケージ一覧を表示する(freeze)例
+*** pkg_resourcesの例
+#+begin_src python
+  import site
+  import pkg_resources
+  pkg_resources.find_distributions(
+      site.getsitepackages()[0])
+#+end_src
+*** distlibの例
+#+begin_src python
+  from distlib.database import DistributionPath
+  dist_path = DistributionPath()
+  [d.name for d in dist_path.get_distributions()]
+#+end_src
+*** importlib.metadataの例
+#+begin_src python
+  from importlib import metadata
+  [d.name for d in metadata.distributions()]
+#+end_src
 * おわり
 ** まとめ
 - setuptoolsの近代化
@@ -267,7 +273,7 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - egg
   - pkg_resources
   - などなど
-** 参考
+** 参考(1)
 - PEPs
   - PEP 405 – Python Virtual Environments
   - PEP 420 – Implicit Namespace Packages
@@ -278,10 +284,16 @@ Disable the import of the module site and the site-dependent manipulations of sy
   - PEP 513 – A Platform Tag for Portable Linux Built Distributions
   - PEP 517 – A build-system independent format for source trees
   - PEP 571 – The manylinux2010 Platform Tag
+** 参考(2)
+- PEPs
   - PEP 599 – The manylinux2014 Platform Tag
   - PEP 600 – Future ‘manylinux’ Platform Tags for Portable Linux Built Distributions
   - PEP 621 – Storing project metadata in pyproject.toml
   - PEP 632 – Deprecate distutils module
   - PEP 660 – Editable installs for pyproject.toml based builds (wheel based)
-- [[https://setuptools.pypa.io/en/latest/][setuptools documentation]]
-- [[https://packaging.python.org/en/latest/][Python Packaging User Guide]]
+- The Python Standard Library
+ - [[https://docs.python.org/3/library/pkgutil.html][pkgutil]]
+ - [[https://docs.python.org/3/library/importlib.html][importlib]]
+ - [[https://docs.python.org/3/library/importlib.metadata.html][importlib.metadata]]
+- setuptools documentation, https://setuptools.pypa.io/en/latest/
+- Python Packaging User Guide, https://packaging.python.org/en/latest/
