@@ -1,6 +1,7 @@
 #+TITLE: setuptoolsの最近
 #+SUBTITLE: PyCon JP 2022
 #+AUTHOR: Atsushi Odagiri
+#+DATE: 2022-10-14
 #+BEAMER_THEME: Madrid
 #+BEAMER_COLOR_THEME: beetle
 #+OPTIONS: H:2 toc:t num:t
@@ -58,6 +59,7 @@
 - 2022 65.4.1
   - *NEW!* setuptoolsの最近
 
+
 * setuptoolsとは？
 ** setuptoolsとは？
   - ~distutils~ を拡張するもの
@@ -67,8 +69,43 @@
   - 近代化：パッケージング関連PEPへの追従
   - distutilsが標準ライブラリから消える予定
   - いろいろ剥ぎ取られて純粋なパッケージ作成ツールになってきている
+* Good-bye distutils!
+** distutilsの行く末
+  - PEP 632 – Deprecate distutils module
+  - 3.12で削除(多分)
+    - https://github.com/python/cpython/tree/main/Lib/distutils
+    - まだある...
+** distutilsはどこにある？
+  - 標準ライブラリ
+  - setuptoolsの中 (~setuptools/_distutils~)
+  - ~SETUPTOOLS_USE_DISTUTILS~
+    - ~"stdlib"~ 標準ライブラリにあるdistutilsを使う
+    - ~"local"~ setuptools内部で持っているdistutilsを使う
+  - ~distutils-precedence.pth~ の中で切り替え
+
+** pthファイル
+ - ~site-packages~ に置いてある ~*.pth~
+ - ~./~ などで始まる行は ~sys.path~ に追加
+ - それ以外の行はpythonコードとして *実行される*
+   - *回避不能*
+   - python2のころは ~-S~ オプションで回避できてたかも
+
+#+begin_example
+-S
+Disable the import of the module site and the site-dependent manipulations of sys.path that it entails.
+#+end_example
+
+** Good bye setup.py?
+
+- ~setup.py~ お前、消えるのか？
 
 * setuptoolsの近代化
+** setuptoolsの近代化
+
+- PEPへの追従
+- setupが持っていた機能は別のツールへ
+- 純粋にパッケージ作成のツール
+
 ** PEPへの追従
   - PEP 517
     - ~setup.py~ が不要に！(でもeditableするときは必要)
@@ -101,15 +138,6 @@ $ python setup.py upload
   build-backend = "setuptools.build_meta"
 #+end_src
 
-** ツールの分離
-- wheel作成は ~build~ を使う
-- PyPIへのアップロードは ~twine~ を使う
-- ~setup.py~ いらなくない？
-  
-#+begin_example
-$ python -m build .
-$ python -m twine upload dist/*.whl
-#+end_example
 ** PEP621
 - ~pyproject.toml~ にメタデータを書くためのスキーマ定義
 - v61.0.0 (24 Mar 2022) で導入
@@ -173,34 +201,16 @@ $ python -m twine upload dist/*.whl
   - poetryやflitは対応済
   - setuptoolsは作業中
 
-* Good-bye distutils!
-** distutilsの行く末
-  - PEP 632 – Deprecate distutils module
-  - Good bye ~setup.py~ !
-  - 3.12で削除(多分)
-    - https://github.com/python/cpython/tree/main/Lib/distutils
-    - まだある...
-** distutilsはどこにある？
-  - 標準ライブラリ
-  - setuptoolsの中 (~setuptools/_distutils~)
-  - ~SETUPTOOLS_USE_DISTUTILS~
-    - ~"stdlib"~ 標準ライブラリにあるdistutilsを使う
-    - ~"local"~ setuptools内部で持っているdistutilsを使う
-  - ~distutils-precedence.pth~ の中で切り替え
-
-** pthファイル
- - ~site-packages~ に置いてある ~*.pth~
- - ~./~ などで始まる行は ~sys.path~ に追加
- - それ以外の行はpythonコードとして *実行される*
-   - *回避不能*
-   - python2のころは ~-S~ オプションで回避できてたかも
-
-#+begin_example
--S
-Disable the import of the module site and the site-dependent manipulations of sys.path that it entails.
-#+end_example
-
 * setuptoolsが失ったもの
+** setuptoolsが失ったもの
+
+- パッケージインストーラー(~easy_install~)
+- パッケージのマルチバージョニング(~eggディレクトリ~)
+- ディストリビューションフォーマット(~eggフォーマット~)
+- パッケージメタデータの拡張(~egg_info~)
+- パッケージ関連のライブラリ(~pkg_resources~)
+- PyPIへのアップロード(~setup.py upload~)
+
 ** インストーラーはeasy_installからpipへ
   - PEP 453 – Explicit bootstrapping of pip in Python installations
     - pythonインストールと同時にpipもインストールされるようになった
@@ -226,6 +236,7 @@ Disable the import of the module site and the site-dependent manipulations of sy
  - ~setuptools.Require~ で特定バージョンを有効化
  - ~venv~ で分離すればいいよね
 ** バイナリディストリビューションはeggからwheelへ
+  - PEP 427 – The Wheel Binary Package Format 1.0
   - PEP 491 – The Wheel Binary Package Format 1.9
   - PEP 425 – Compatibility Tags for Built Distributions
   - PEP 513 – A Platform Tag for Portable Linux Built Distributions
@@ -270,8 +281,21 @@ Disable the import of the module site and the site-dependent manipulations of sy
   from importlib import metadata
   [d.name for d in metadata.distributions()]
 #+end_src
+** PyPIへのアップロードフロー
+
+- wheel作成は ~build~ を使う
+- PyPIへのアップロードは ~twine~ を使う
+#+begin_example
+$ python setup.py register sdist upload
+#+end_example  
+#+begin_example
+$ python -m build .
+$ python -m twine upload dist/*.whl
+#+end_example
 * おわり
 ** まとめ
+- distutilsが標準ライブラリから消えるのでsetuptoolsに同梱
+  - ハックがひどい
 - setuptoolsの近代化
   - PEP 517
     - ~setup.py~ が不要に！(でもeditableするときは必要)
@@ -279,8 +303,6 @@ Disable the import of the module site and the site-dependent manipulations of sy
     - ~setup.cfg~ が不要に！(でもeditableするときは必要)
   - PEP 660
     - ~pyproject.toml~ だけでeditable可能に！
-- distutilsが標準ライブラリから消えるのでsetuptoolsに同梱
-  - ハックがひどい
 - setuptoolsが失ってきたもの
   - インストーラー
   - egg
@@ -310,3 +332,4 @@ Disable the import of the module site and the site-dependent manipulations of sy
  - [[https://docs.python.org/3/library/importlib.metadata.html][importlib.metadata]]
 - setuptools documentation, https://setuptools.pypa.io/en/latest/
 - Python Packaging User Guide, https://packaging.python.org/en/latest/
+- setuptools - The Peak Developer's Center, http://peak.telecommunity.com/DevCenter/setuptools
