@@ -90,10 +90,10 @@
    - *回避不能*
    - python2のころは ~-S~ オプションで回避できてたかも
 
-#+begin_example
+#+begin_quote
 -S
 Disable the import of the module site and the site-dependent manipulations of sys.path that it entails.
-#+end_example
+#+end_quote
 
 ** Good bye setup.py?
 
